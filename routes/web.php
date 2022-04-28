@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,4 +27,24 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
+});
+
+Route::get('/billing-portal', function (Request $request) {
+    return $request->user()->redirectToBillingPortal();
+});
+
+
+Route::get('/new-customer', function (Request $request) {
+    $user = Auth::user();
+    $options = [
+        'address' => [
+            'city' => 'Idaho Falls',
+            'country' => 'US',
+            'line1' => '332',
+            'postal_code' => '83402',
+            'state' => 'Idaho',
+        ]
+    ];
+    $stripeCustomer = $user->createAsStripeCustomer($options);
+    return $stripeCustomer;
 });
